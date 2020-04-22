@@ -1,4 +1,4 @@
-FROM spydernaz/spark-base:latest
+FROM fedormalyshkin/spark-base:2.4.5
 
 COPY start-worker.sh /
 

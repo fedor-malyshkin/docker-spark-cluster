@@ -38,13 +38,13 @@ chmod +x build-images.sh
 
 This will create the following docker images:
 
-* spark-base:2.3.1: A base image based on java:alpine-jdk-8 wich ships scala, python3 and spark 2.3.1
+* spark-base:2.4.5: A base image based on java:alpine-jdk-8 wich ships scala, python3 and spark 2.4.5
 
-* spark-master:2.3.1: A image based on the previously created spark image, used to create a spark master containers.
+* spark-master:2.4.5: A image based on the previously created spark image, used to create a spark master containers.
 
-* spark-worker:2.3.1: A image based on the previously created spark image, used to create spark worker containers.
+* spark-worker:2.4.5: A image based on the previously created spark image, used to create spark worker containers.
 
-* spark-submit:2.3.1: A image based on the previously created spark image, used to create spark submit containers(run, deliver driver and die gracefully).
+* spark-submit:2.4.5: A image based on the previously created spark image, used to create spark submit containers(run, deliver driver and die gracefully).
 
 ## Run the docker-compose
 
@@ -60,7 +60,7 @@ Just validate your cluster accesing the spark UI on each worker & master URL.
 
 ### Spark Master
 
-http://10.5.0.2:8080/
+http://localhost:9090/
 
 ![alt text](docs/spark-master.png "Spark master UI")
 
@@ -102,8 +102,8 @@ To make app running easier I've shipped two volume mounts described in the follo
 
 Host Mount|Container Mount|Purposse
 ---|---|---
-/mnt/spark-apps|/opt/spark-apps|Used to make available your app's jars on all workers & master
-/mnt/spark-data|/opt/spark-data| Used to make available your app's data on all workers & master
+./apps|/opt/spark-apps|Used to make available your app's jars on all workers & master
+./data|/opt/spark-data| Used to make available your app's data on all workers & master
 
 This is basically a dummy DFS created from docker Volumes...(maybe not...)
 
@@ -113,9 +113,7 @@ Now let`s make a **wild spark submit** to validate the distributed nature of our
 
 ## Create a Scala spark app
 
-The first thing you need to do is to make a spark application. Our spark-submit image is designed to run scala code (soon will ship pyspark support guess I was just lazy to do so..).
-
-In my case I am using an app called  [crimes-app](https://). You can make or use your own scala app, I 've just used this one because I had it at hand.
+The first thing you need to do is to make a spark application. Our spark-submit image is designed to run code.
 
 
 ## Ship your jar & dependencies on the Workers and Master
@@ -170,11 +168,11 @@ SPARK_APPLICATION_MAIN_CLASS="org.mvb.applications.CrimesApp"
 SPARK_SUBMIT_ARGS="--conf spark.executor.extraJavaOptions='-Dconfig-path=/opt/spark-apps/dev/config.conf'"
 
 #We have to use the same network as the spark cluster(internally the image resolves spark master as spark://spark-master:7077)
-docker run --network docker-spark-cluster_spark-network \
+docker run --network docker-spark-cluster_default \
 -v /mnt/spark-apps:/opt/spark-apps \
 --env SPARK_APPLICATION_JAR_LOCATION=$SPARK_APPLICATION_JAR_LOCATION \
 --env SPARK_APPLICATION_MAIN_CLASS=$SPARK_APPLICATION_MAIN_CLASS \
-spark-submit:2.3.1
+fedormalyshkin/spark-submit:2.4.5
 
 ```
 
@@ -191,7 +189,7 @@ Running Spark using the REST application submission protocol.
 {
   "action" : "CreateSubmissionResponse",
   "message" : "Driver successfully submitted as driver-20180923151753-0000",
-  "serverSparkVersion" : "2.3.1",
+  "serverSparkVersion" : "2.4.5",
   "submissionId" : "driver-20180923151753-0000",
   "success" : true
 }

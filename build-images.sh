@@ -2,7 +2,7 @@
 
 set -e
 
-docker build -t spark-base:latest ./docker/base
-docker build -t spark-master:latest ./docker/spark-master
-docker build -t spark-worker:latest ./docker/spark-worker
-docker build -t spark-submit:latest ./docker/spark-submit
+docker build -t fedormalyshkin/spark-base:2.4.5 ./docker/base
+docker build -t fedormalyshkin/spark-master:2.4.5 ./docker/spark-master
+docker build -t fedormalyshkin/spark-worker:2.4.5 ./docker/spark-worker
+docker build -t fedormalyshkin/spark-submit:2.4.5 ./docker/spark-submit
